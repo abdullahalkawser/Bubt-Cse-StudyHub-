@@ -47,9 +47,9 @@ export default function TabLayout() {
 
       {/* Lectures Tab */}
       <Tabs.Screen
-        name="lectures"
+        name="notice"
         options={{
-          title: 'Class',
+          title: 'Notice',
           tabBarIcon: ({ color }) => <FontAwesome5 name="video" size={18} color={color} />,
         }}
       />

@@ -1,11 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   View, Text, ScrollView, StyleSheet, Animated, 
   TouchableWithoutFeedback, SafeAreaView, StatusBar, Dimensions, Image
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-
+import { db } from '../../FirebaseConfig'; // path check করো
+import { collection, getDocs,query, orderBy, limit, where } from 'firebase/firestore';
 const { width } = Dimensions.get('window');
+import { useRouter } from 'expo-router'
+
+
 
 // ডাটা সেট
 const routineData = [
@@ -14,13 +18,79 @@ const routineData = [
   { id: 3, time: '02:00 PM', subject: 'Physics II', room: 'Room 105', icon: 'atom', color: '#F59E0B' },
 ];
 
+
+
+
+
 const studyMaterials = [
   { id: 1, title: 'Data Structures', icon: 'file-tree', color: '#22C55E' },
   { id: 2, title: 'Algorithm PDF', icon: 'xml', color: '#3B82F6' },
   { id: 3, title: 'DBMS Notes', icon: 'database', color: '#F59E0B' },
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
+  const [stats, setStats] = useState({
+    books: 0,
+    notes: 0,
+    assignments: 0,
+    notices: 0,
+  });
+  const router = useRouter()
+const [latestNotice, setLatestNotice] = useState(null);
+
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  // ২. ফায়ারবেস থেকে ডাটা ফেচ করা
+const fetchDashboardData = async () => {
+  try {
+
+    const booksSnap = await getDocs(collection(db, 'books'));
+    const assignmentsSnap = await getDocs(collection(db, 'assignments'));
+    
+    // শুধু আনরিড (Unread) নোটিশ কুয়েরি করা ভালো, তবে সহজ করার জন্য সব এনে ফিল্টার করছি
+    const noticesSnap = await getDocs(collection(db, 'notices'));
+    const unreadNotices = noticesSnap.docs.filter(doc => doc.data().read === false).length;
+// ২. শুধুমাত্র লেটেস্ট নোটিশটি আনা (OrderBy createdAt Descending and Limit 1)
+      const noticeQuery = query(
+        collection(db, 'notices'), 
+        orderBy('createdAt', 'desc'), 
+        limit(1)
+      );
+      const noticeSnap = await getDocs(noticeQuery);
+      
+      if (!noticeSnap.empty) {
+        setLatestNotice({ id: noticeSnap.docs[0].id, ...noticeSnap.docs[0].data() });
+      }
+
+
+    setStats({
+      books: booksSnap.size,
+      assignments: assignmentsSnap.size,
+      notices: unreadNotices, // এখানে শুধু আনরিড সংখ্যা দেখাবে
+    });
+  } catch (error) {
+    console.log("Error: ", error);
+  } finally {
+ 
+  }
+};
+
+// আইকনে ক্লিক করলে নোটিফিকেশন পেজে যাওয়ার জন্য:
+<TouchableOpacity 
+  style={styles.settingsBtn} 
+ 
+>
+
+  <Ionicons name="notifications-outline" size={24} color="#fff" />
+  {stats.notices > 0 && (
+    <View style={styles.notiBadge}>
+      <Text style={styles.notiBadgeText}>{stats.notices}</Text>
+    </View>
+  )}
+</TouchableOpacity>
   return (
     <View style={styles.mainContainer}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
@@ -43,10 +113,18 @@ export default function HomeScreen() {
                 </View>
               </View>
             </View>
-            {/* নোটিফিকেশন রিমুভ করে একটি ক্লিন প্রোফাইল সেটিংস বাটন */}
-            <TouchableOpacity style={styles.settingsBtn}>
-              <Ionicons name="grid-outline" size={22} color="#fff" />
-            </TouchableOpacity>
+      {/* নোটিফিকেশন আইকন উইথ ব্যাজ */}
+ <TouchableOpacity 
+      style={styles.settingsBtn} 
+      onPress={() => router.push('/notice')} // এখানে আপনার ফাইলের পাথ দিন
+    >
+      <Ionicons name="notifications-outline" size={24} color="#fff" />
+      {stats.notices > 0 && (
+        <View style={styles.notiBadge}>
+          <Text style={styles.notiBadgeText}>{stats.notices}</Text>
+        </View>
+      )}
+    </TouchableOpacity>
           </View>
         </View>
 
@@ -90,10 +168,10 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
           {/* ৩. Notice Board (Quick View) */}
-        <View style={styles.sectionHeader}>
+        {/* <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent Notices</Text>
-        </View>
-        <View style={styles.noticeCard}>
+        </View> */}
+        {/* <View style={styles.noticeCard}>
             <View style={styles.noticeIcon}>
                <Ionicons name="megaphone-outline" size={22} color="#F59E0B" />
             </View>
@@ -101,7 +179,38 @@ export default function HomeScreen() {
                <Text style={styles.noticeText}>Semester Break from Dec 25th.</Text>
                <Text style={styles.noticeTime}>Posted 2 hours ago</Text>
             </View>
-        </View>
+        </View> */}
+{/* 📢 Recent Notice Board */}
+<View style={styles.sectionHeader}>
+  <Text style={styles.sectionTitle}>Latest Notice</Text>
+  <TouchableOpacity onPress={() => router.push('notice')}>
+   
+  </TouchableOpacity>
+</View>
+
+{latestNotice ? (
+  <TouchableOpacity 
+    style={[styles.noticeCard, !latestNotice.read && { borderColor: '#22C55E' }]}
+    onPress={() => router.push('/notice')}
+  >
+    <View style={[styles.noticeIcon, { backgroundColor: latestNotice.read ? '#334155' : '#22C55E20' }]}>
+      <Ionicons 
+        name={latestNotice.read ? "mail-open-outline" : "megaphone-outline"} 
+        size={22} 
+        color={latestNotice.read ? "#94A3B8" : "#22C55E"} 
+      />
+    </View>
+    <View style={{ flex: 1, marginLeft: 15 }}>
+      <Text style={styles.noticeText} numberOfLines={1}>{latestNotice.title}</Text>
+      <Text style={styles.noticeTime} numberOfLines={1}>{latestNotice.desc}</Text>
+    </View>
+    {!latestNotice.read && <View style={styles.newDot} />}
+  </TouchableOpacity>
+) : (
+  <View style={styles.noticeCard}>
+    <Text style={{ color: '#94A3B8' }}>No notices available</Text>
+  </View>
+)}
 
        <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Upcoming Exams</Text>
@@ -259,5 +368,36 @@ const styles = StyleSheet.create({
   noticeCard: { backgroundColor: '#1E293B', marginHorizontal: 20, padding: 15, borderRadius: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#334155' },
   noticeIcon: { backgroundColor: '#F59E0B20', padding: 12, borderRadius: 15 },
   noticeText: { color: '#CBD5E1', fontSize: 14, fontWeight: '500' },
-  noticeTime: { color: '#64748B', fontSize: 11, marginTop: 4 }
+  noticeTime: { color: '#64748B', fontSize: 11, marginTop: 4 },
+notiBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#1E293B'
+  },
+  notiBadgeText: { color: '#fff', fontSize: 9, fontWeight: 'bold' },
+  newDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#22C55E',
+    marginLeft: 10
+  },
+  noticeCard: { 
+    backgroundColor: '#1E293B', 
+    marginHorizontal: 20, 
+    padding: 15, 
+    borderRadius: 20, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderWidth: 1, 
+    borderColor: '#334155' 
+  },
 });
