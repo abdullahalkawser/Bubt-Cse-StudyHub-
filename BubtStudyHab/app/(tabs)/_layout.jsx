@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import { Tabs } from 'expo-router';
 import { HapticTab } from '@/components/haptic-tab';
-import { Ionicons, MaterialIcons, FontAwesome5, Entypo } from '@expo/vector-icons';
+import { Ionicons, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur'; // যদি এক্সপো ব্লার ইউজ করতে চান
 
 export default function TabLayout() {
   const iconSize = 22;
@@ -11,64 +12,85 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#22C55E', // Active Green Color
-        tabBarInactiveTintColor: '#94A3B8', // Inactive Gray Color
+        tabBarActiveTintColor: '#fff', // সিলেক্ট করলে আইকন সাদা হবে
+        tabBarInactiveTintColor: '#64748B', 
         tabBarButton: HapticTab,
         tabBarLabelStyle: styles.label,
         tabBarStyle: styles.footer,
+        tabBarHideOnKeyboard: true,
+        // Active Tab Indicator Background
+        tabBarItemStyle: styles.tabItem,
       }}
     >
-      {/* Home Tab */}
       <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Ionicons name="home" size={iconSize} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <Ionicons name={focused ? "home" : "home-outline"} size={iconSize} color={color} />
+            </View>
+          ),
         }}
       />
 
-      {/* Book Tab */}
       <Tabs.Screen
         name="book"
         options={{
           title: 'Library',
-          tabBarIcon: ({ color }) => <FontAwesome5 name="book-open" size={18} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <MaterialCommunityIcons name={focused ? "book-open-variant" : "book-open-outline"} size={iconSize} color={color} />
+            </View>
+          ),
         }}
       />
 
-      {/* Notes Tab */}
-      <Tabs.Screen
-        name="notes"
-        options={{
-          title: 'Notes',
-          tabBarIcon: ({ color }) => <MaterialIcons name="description" size={iconSize} color={color} />,
-        }}
-      />
-
-      {/* Lectures Tab */}
       <Tabs.Screen
         name="notice"
         options={{
           title: 'Notice',
-          tabBarIcon: ({ color }) => <FontAwesome5 name="video" size={18} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <Ionicons name={focused ? "notifications" : "notifications-outline"} size={iconSize} color={color} />
+            </View>
+          ),
         }}
       />
 
-      {/* Assignments Tab */}
       <Tabs.Screen
-        name="assignments"
+        name="guildline"
         options={{
-          title: 'Tasks',
-          tabBarIcon: ({ color }) => <Entypo name="list" size={iconSize} color={color} />,
+          title: 'Guide',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <FontAwesome6 name="compass" size={20} color={color} />
+            </View>
+          ),
         }}
       />
 
-      {/* Profile Tab */}
+      <Tabs.Screen
+        name="routine"
+        options={{
+          title: 'Routine',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <Ionicons name={focused ? "calendar" : "calendar-outline"} size={iconSize} color={color} />
+            </View>
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons name="person" size={iconSize} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.activeIconBg]}>
+              <Ionicons name={focused ? "person" : "person-outline"} size={iconSize} color={color} />
+            </View>
+          ),
         }}
       />
     </Tabs>
@@ -77,25 +99,49 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   footer: {
-    position: 'absolute', // ট্যাব বারকে ভাসমান করার জন্য
-    bottom: 15,
-    left: 15,
-    right: 15,
-    backgroundColor: '#1E293B', // ডার্ক ব্লু ব্যাকগ্রাউন্ড
-    borderRadius: 25,
-    height: 70,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-    paddingTop: 10,
-    borderTopWidth: 0, // বর্ডার রিমুভ করা হয়েছে
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 30 : 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#111827', // Pitch Black/Dark Blue
+    borderRadius: 35,
+    height: 75,
+    borderTopWidth: 0,
+    paddingTop: 0,
+    
+    // Shadow & Elevation
+    shadowColor: '#22C55E', // হালকা সবুজ গ্লো (Glow effect)
+    shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 15,
-    elevation: 10,
+    shadowRadius: 20,
+    elevation: 20,
+    
+    // মডার্ন বর্ডার
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  tabItem: {
+    paddingVertical: 10,
+  },
+  iconContainer: {
+    width: 45,
+    height: 45,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transition: '0.3s',
+  },
+  activeIconBg: {
+    backgroundColor: '#22C55E', // আইকন সিলেক্ট করলে এই কালার এর গোল ব্যাকগ্রাউন্ড হবে
+    marginTop: -20, // আইকন একটু উপরে উঠে আসবে (Pop effect)
+    borderWidth: 4,
+    borderColor: '#111827',
   },
   label: {
     fontSize: 10,
-    fontWeight: '600',
-    marginTop: 2,
+    fontWeight: '800',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

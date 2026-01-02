@@ -11,7 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/home')
+      router.push('/welcomepage')
     }, 1000) // 2 সেকেন্ড পরে নেক্সট পেজ
 
     return () => clearTimeout(timer)

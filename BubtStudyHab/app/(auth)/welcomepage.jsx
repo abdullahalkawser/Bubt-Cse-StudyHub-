@@ -14,6 +14,7 @@ import PagerView from 'react-native-pager-view';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
+import { useRouter } from 'expo-router'
 
 const DATA = [
   {
@@ -25,13 +26,13 @@ const DATA = [
   {
     title: "Never Miss\na Task ⏰",
     desc: "Stay organized and keep track of your daily academic schedule and deadlines.",
-    imageUrl: require('../../assets/images/1.png'), 
+    imageUrl: require('../../assets/images/3.png'), 
     color: '#2196F3'
   },
   {
     title: "Ready to\nLead? 🚀",
     desc: "Unlock your potential and lead the way in your engineering journey at BUBT.",
-    imageUrl: require('../../assets/images/1.png'), 
+    imageUrl: require('../../assets/images/2.png'), 
     color: '#6200EE'
   }
 ];
@@ -43,10 +44,11 @@ export default function OnboardingScreen() {
   
   const isLastPage = currentPage === DATA.length - 1;
 
+    const router = useRouter()
   // Navigate to Sign In Page
   const handleFinished = () => {
     // Replace 'SignIn' with the actual name of your login screen in your Stack Navigator
-    navigation.navigate('signin'); 
+router.push('/home')
   };
 
   return (
