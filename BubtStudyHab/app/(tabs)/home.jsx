@@ -150,7 +150,9 @@ const fetchDashboardData = async () => {
         {/* 📅 Today's Routine (Horizontal) */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Today's Routine</Text>
-          <Text style={styles.seeAll}>Full Schedule</Text>
+         <TouchableOpacity onPress={() => router.push('/routine')}>
+    <Text style={styles.seeAll}>View Routine</Text>
+  </TouchableOpacity>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingBottom: 10 }}>
           {routineData.map((item) => (
@@ -228,10 +230,12 @@ const fetchDashboardData = async () => {
  
 
         {/* 📚 Library Highlights */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Library Highlights</Text>
-          <Text style={styles.seeAll}>View All</Text>
-        </View>
+     <View style={styles.sectionHeader}>
+  <Text style={styles.sectionTitle}>Library Highlights</Text>
+  <TouchableOpacity onPress={() => router.push('/book')}>
+    <Text style={styles.seeAll}>View All</Text>
+  </TouchableOpacity>
+</View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingLeft: 20 }}>
           {studyMaterials.map((item) => (
             <View key={item.id} style={styles.itemCard}>
