@@ -30,7 +30,7 @@ const DATA = [
     color: '#2196F3'
   },
   {
-    title: "Ready to\nLead? 🚀",
+    title: "Ready to\nLead  your Result? 🚀",
     desc: "Unlock your potential and lead the way in your engineering journey at BUBT.",
     imageUrl: require('../../assets/images/2.png'), 
     color: '#6200EE'
