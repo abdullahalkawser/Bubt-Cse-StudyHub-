@@ -3,172 +3,154 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   StatusBar, Dimensions, Platform
 } from 'react-native';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight;
 
-// ৫ দিনের পরিপূর্ণ রুটিন ডাটা
 const ROUTINE_DATA = {
-  'Sunday': [
-    { id: 1, time: '08:00 AM', subject: 'Data Structures', teacher: 'Dr. Abu Sayed', room: 'R-302', type: 'Theory', color: '#3B82F6' },
-    { id: 2, time: '09:30 AM', subject: 'Operating Systems', teacher: 'Prof. M. Karim', room: 'R-405', type: 'Theory', color: '#22C55E' },
-    { id: 3, time: '11:00 AM', subject: 'Discrete Math', teacher: 'Dr. Nasir Uddin', room: 'R-201', type: 'Theory', color: '#A855F7' },
-    { id: 4, time: '12:00 PM', subject: 'Database Lab', teacher: 'Engr. J. Smith', room: 'Lab-02', type: 'Lab', color: '#F59E0B' },
+  Sunday: [
+    { id: 1, subject: 'ENG 101', faculty: 'JMSN', roomcode: '2705', intake: '57 - 4', type: 'Theory', color: '#6366F1', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 7, floorBangla: '৭ম তলা', roomNo: 5, roomBangla: 'রুম নং 05', classTime: '01:15 PM – 02:45 PM' },
+    { id: 2, subject: 'BHC 101', faculty: 'MARK', roomcode: '2706', intake: '57 - 4', type: 'Theory', color: '#EC4899', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 7, floorBangla: '৭ম তলা', roomNo: 6, roomBangla: 'রুম নং 06', classTime: '02:45 PM – 04:15 PM' },
   ],
-  'Monday': [
-    { id: 5, time: '09:00 AM', subject: 'Computer Networks', teacher: 'Ms. Alice P.', room: 'R-201', type: 'Theory', color: '#06B6D4' },
-    { id: 6, time: '10:30 AM', subject: 'Algorithm Lab', teacher: 'Dr. Alan Turing', room: 'Lab-01', type: 'Lab', color: '#EF4444' },
-    { id: 7, time: '01:30 PM', subject: 'Software Eng.', teacher: 'Prof. Zaman', room: 'R-303', type: 'Theory', color: '#EC4899' },
-    { id: 8, time: '03:00 PM', subject: 'Technical Writing', teacher: 'Ms. Sarah', room: 'R-105', type: 'Theory', color: '#14B8A6' },
+  Monday: [
+    { id: 3, subject: 'CSE 101', faculty: 'MDSS', roomcode: '2316', intake: '57 - 4', type: 'Theory', color: '#3B82F6', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 3, floorBangla: '৩য় তলা', roomNo: 16, roomBangla: 'রুম নং 16', classTime: '08:15 AM – 09:45 AM' },
+    { id: 4, subject: 'MAT 101', faculty: 'MKI', roomcode: '2316', intake: '57 - 4', type: 'Theory', color: '#22C55E', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 3, floorBangla: '৩য় তলা', roomNo: 16, roomBangla: 'রুম নং 16', classTime: '09:45 AM – 11:15 AM' },
   ],
-  'Tuesday': [
-    { id: 9, time: '08:00 AM', subject: 'Microprocessor', teacher: 'Engr. Rakib', room: 'Lab-03', type: 'Lab', color: '#F43F5E' },
-    { id: 10, time: '11:00 AM', subject: 'Digital Logic', teacher: 'Dr. Hasan', room: 'R-402', type: 'Theory', color: '#8B5CF6' },
-    { id: 11, time: '12:30 PM', subject: 'Economics', teacher: 'Prof. Selina', room: 'R-101', type: 'Theory', color: '#10B981' },
-    { id: 12, time: '02:00 PM', subject: 'Compiler Design', teacher: 'Dr. Arif', room: 'R-501', type: 'Theory', color: '#6366F1' },
+  Tuesday: [
+    { id: 5, subject: 'ENG 101', faculty: 'JMSN', roomcode: '2905', intake: '57 - 4', type: 'Theory', color: '#6366F1', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 9, floorBangla: '৯ম তলা', roomNo: 5, roomBangla: 'রুম নং 05', classTime: '08:15 AM – 09:45 AM' },
+    { id: 6, subject: 'BHC 101', faculty: 'MARK', roomcode: '2905', intake: '57 - 4', type: 'Theory', color: '#EC4899', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 9, floorBangla: '৯ম তলা', roomNo: 5, roomBangla: 'রুম নং 05', classTime: '09:45 AM – 11:15 AM' },
   ],
-  'Wednesday': [
-    { id: 13, time: '09:00 AM', subject: 'AI & Robotics', teacher: 'Dr. Karishma', room: 'Lab-04', type: 'Lab', color: '#F59E0B' },
-    { id: 14, time: '12:00 PM', subject: 'Math IV', teacher: 'Prof. Jabbar', room: 'R-205', type: 'Theory', color: '#3B82F6' },
-    { id: 15, time: '01:30 PM', subject: 'Cyber Security', teacher: 'Engr. Fahim', room: 'R-302', type: 'Theory', color: '#EF4444' },
-    { id: 16, time: '03:00 PM', subject: 'Ethics in IT', teacher: 'Dr. Muna', room: 'R-102', type: 'Theory', color: '#22C55E' },
+  Wednesday: [
+    { id: 7, subject: 'CSE 102', faculty: 'MDSS', roomcode: '2517', intake: '57 - 4', type: 'Lab', color: '#0EA5E9', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 5, floorBangla: '৫ম তলা', roomNo: 17, roomBangla: 'রুম নং 17', classTime: '02:45 PM – 04:15 PM' },
+    { id: 8, subject: 'CSE 102', faculty: 'MDSS', roomcode: '2517', intake: '57 - 4', type: 'Lab', color: '#0EA5E9', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 5, floorBangla: '৫ম তলা', roomNo: 17, roomBangla: 'রুম নং 17', classTime: '04:15 PM – 05:45 PM' },
   ],
-  'Thursday': [
-    { id: 17, time: '08:00 AM', subject: 'Graphics Design', teacher: 'Mr. Niloy', room: 'Lab-05', type: 'Lab', color: '#EC4899' },
-    { id: 18, time: '11:00 AM', subject: 'Machine Learning', teacher: 'Dr. Shuvo', room: 'R-405', type: 'Theory', color: '#06B6D4' },
-    { id: 19, time: '12:30 PM', subject: 'Web Dev Lab', teacher: 'Engr. Tanvir', room: 'Lab-02', type: 'Lab', color: '#F43F5E' },
-    { id: 20, time: '03:30 PM', subject: 'Seminar', teacher: 'Dept. Head', room: 'Auditorium', type: 'Theory', color: '#8B5CF6' },
+  Thursday: [
+    { id: 9, subject: 'CSE 101', faculty: 'MDSS', roomcode: '2706', intake: '57 - 4', type: 'Theory', color: '#3B82F6', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 7, floorBangla: '৭ম তলা', roomNo: 6, roomBangla: 'রুম নং 06', classTime: '02:45 PM – 04:15 PM' },
+    { id: 10, subject: 'MAT 101', faculty: 'MKI', roomcode: '2706', intake: '57 - 4', type: 'Theory', color: '#22C55E', building: 'শহীদ সুজন মাহমুদ ভবন', buildingNo: 2, floor: 7, floorBangla: '৭ম তলা', roomNo: 6, roomBangla: 'রুম নং 06', classTime: '04:15 PM – 05:45 PM' },
   ],
+  Friday: [],
+  Saturday: [],
 };
 
 export default function RoutineScreen() {
   const router = useRouter();
   const scrollRef = useRef(null);
   const [selectedDay, setSelectedDay] = useState('');
-  const [currentTime, setCurrentTime] = useState(new Date());
-
   const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    
-    // আজকের দিন সেট করা
     const todayIndex = new Date().getDay();
-    const todayName = daysList[todayIndex];
-    setSelectedDay(todayName);
-
-    // অটো স্ক্রল লজিক
+    setSelectedDay(daysList[todayIndex]);
     setTimeout(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({
-          x: todayIndex * 78, 
-          animated: true,
-        });
-      }
-    }, 600);
-
-    return () => clearInterval(timer);
+      if (scrollRef.current) scrollRef.current.scrollTo({ x: todayIndex * 75, animated: true });
+    }, 500);
   }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       
-      {/* --- Smart Header --- */}
-      <View style={styles.headerWrapper}>
-        <View style={styles.topHeader}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.navBtn}>
-            <Ionicons name="chevron-back" size={24} color="#fff" />
+      {/* --- CLEAN HEADER --- */}
+      <View style={styles.headerContainer}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <View style={styles.centerHeader}>
-            <Text style={styles.liveClock}>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-            <Text style={styles.liveDate}>{currentTime.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short' })}</Text>
+          <View style={styles.headerTitleBox}>
+            <Text style={styles.mainTitle}>Class Routine</Text>
+            <Text style={styles.subTitle}>Intake 57 | Section 04</Text>
           </View>
-          <TouchableOpacity style={styles.navBtn}>
-            <Ionicons name="options" size={22} color="#fff" />
-          </TouchableOpacity>
+          <View style={styles.iconBtn}>
+            <MaterialCommunityIcons name="bell-outline" size={24} color="#fff" />
+          </View>
         </View>
 
-        {/* --- Day Selector (Horizontally Centered Today) --- */}
+        {/* --- DAY PICKER --- */}
         <ScrollView 
-          ref={scrollRef}
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.daySelector}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          ref={scrollRef} horizontal showsHorizontalScrollIndicator={false} 
+          style={styles.dayScroll} contentContainerStyle={{ paddingHorizontal: 20 }}
         >
           {daysList.map((day) => {
-            const isToday = day === daysList[new Date().getDay()];
+            const isActive = selectedDay === day;
             return (
               <TouchableOpacity 
-                key={day} 
-                onPress={() => setSelectedDay(day)}
-                style={[
-                    styles.dayChip, 
-                    selectedDay === day && styles.activeDayChip,
-                    isToday && { borderColor: '#3B82F6', borderWidth: 2 }
-                ]}
+                key={day} onPress={() => setSelectedDay(day)}
+                style={[styles.dayTab, isActive && styles.dayTabActive]}
               >
-                <Text style={[styles.dayName, selectedDay === day && styles.activeDayText]}>{day.substring(0, 3)}</Text>
-                {isToday && <Text style={styles.todayLabel}>Today</Text>}
+                <Text style={[styles.dayTabText, isActive && styles.dayTabTextActive]}>{day}</Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
       </View>
 
-      <ScrollView contentContainerStyle={styles.mainContent} showsVerticalScrollIndicator={false}>
-        {ROUTINE_DATA[selectedDay] ? (
-          ROUTINE_DATA[selectedDay].map((item, index) => (
-            <View key={item.id} style={styles.classRow}>
-              <View style={styles.timeColumn}>
-                <Text style={styles.timeText}>{item.time.split(' ')[0]}</Text>
-                <Text style={styles.periodText}>{item.time.split(' ')[1]}</Text>
-                <View style={[styles.lineMarker, { backgroundColor: item.color }]} />
+      <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
+        {ROUTINE_DATA[selectedDay]?.length > 0 ? (
+          ROUTINE_DATA[selectedDay].map((item) => {
+            const [startTime, endTime] = item.classTime.split(' – ');
+            return (
+              <View key={item.id} style={styles.classWrapper}>
+                {/* TIME INDICATOR */}
+                <View style={styles.timeSection}>
+                  <View style={styles.timeLabelBox}>
+                    <Text style={styles.timeMainText}>{startTime.split(' ')[0]}</Text>
+                    <Text style={styles.timeAmPm}>{startTime.split(' ')[1]}</Text>
+                  </View>
+                  <View style={[styles.timeLine, {backgroundColor: item.color}]} />
+                  <View style={styles.timeLabelBox}>
+                    <Text style={styles.timeMainText}>{endTime.split(' ')[0]}</Text>
+                    <Text style={styles.timeAmPm}>{endTime.split(' ')[1]}</Text>
+                  </View>
+                </View>
+
+                {/* MAIN INFORMATION CARD */}
+                <View style={styles.detailCard}>
+                  <View style={[styles.cardAccent, {backgroundColor: item.color}]} />
+                  
+                  <View style={styles.cardMainBody}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.subjectName}>{item.subject}</Text>
+                      <View style={[styles.tag, {backgroundColor: item.color + '20'}]}>
+                        <Text style={[styles.tagText, {color: item.color}]}>{item.type}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.facultyRow}>
+                      <FontAwesome5 name="chalkboard-teacher" size={14} color="#94A3B8" />
+                      <Text style={styles.facultyText}>Faculty: <Text style={{color: '#E2E8F0'}}>{item.faculty}</Text></Text>
+                    </View>
+
+                    <View style={styles.infoDivider} />
+
+                    <View style={styles.locationGrid}>
+                      <View style={styles.buildingInfo}>
+                        <Ionicons name="business" size={16} color="#3B82F6" />
+                        <Text style={styles.buildingName}>{item.building} (B-{item.buildingNo})</Text>
+                      </View>
+                      
+                      <View style={styles.badgesContainer}>
+                        <View style={styles.metaBadge}>
+                          <Text style={styles.metaBadgeText}>{item.floorBangla}</Text>
+                        </View>
+                        <View style={styles.metaBadge}>
+                          <Text style={styles.metaBadgeText}>{item.roomBangla}</Text>
+                        </View>
+                        <View style={[styles.metaBadge, styles.roomCodeBadge]}>
+                          <Text style={styles.roomCodeValue}>#{item.roomcode}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
               </View>
-
-              <TouchableOpacity activeOpacity={0.9} style={styles.subjectCard}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.subjectTitle}>{item.subject}</Text>
-                  <View style={[styles.typeBadge, { backgroundColor: item.color + '20' }]}>
-                    <Text style={[styles.typeText, { color: item.color }]}>{item.type}</Text>
-                  </View>
-                </View>
-                
-                <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="account-tie" size={16} color="#94A3B8" />
-                  <Text style={styles.infoText}>{item.teacher}</Text>
-                </View>
-
-                <View style={styles.cardFooter}>
-                  <View style={styles.footerItem}>
-                    <Ionicons name="location" size={14} color="#64748B" />
-                    <Text style={styles.footerText}>{item.room}</Text>
-                  </View>
-                  <View style={styles.footerItem}>
-                    <Ionicons name="time" size={14} color="#64748B" />
-                    <Text style={styles.footerText}>1.5h</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))
+            );
+          })
         ) : (
-          /* --- No Class (Friday/Saturday) --- */
-          <View style={styles.noClassWrapper}>
-            <View style={styles.moonGlow}>
-              <MaterialCommunityIcons name="moon-waning-crescent" size={100} color="#FACC15" />
-              <Ionicons name="sparkles" size={24} color="#fff" style={styles.star1} />
-            </View>
-            <Text style={styles.noClassTitle}>Happy Weekend!</Text>
-            <Text style={styles.noClassPara}>
-              No classes today. Take this time to relax and refresh for the upcoming week.
-            </Text>
-            <TouchableOpacity style={styles.notesBtn} onPress={() => router.push('/allnote')}>
-               <Text style={styles.notesBtnText}>Review Study Notes</Text>
-            </TouchableOpacity>
+          <View style={styles.noClassContainer}>
+            <MaterialCommunityIcons name="calendar-remove" size={80} color="#1E293B" />
+            <Text style={styles.noClassText}>No classes scheduled for {selectedDay}</Text>
           </View>
         )}
       </ScrollView>
@@ -178,53 +160,73 @@ export default function RoutineScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#020617' },
-  headerWrapper: {
+  
+  // Header
+  headerContainer: {
     backgroundColor: '#0F172A',
-    paddingTop: STATUSBAR_HEIGHT + 5,
-    paddingBottom: 25,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    elevation: 20, shadowColor: '#3B82F6', shadowOpacity: 0.2,
+    paddingTop: STATUSBAR_HEIGHT + 10,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    elevation: 10,
   },
-  topHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20 },
-  navBtn: { padding: 12, backgroundColor: '#1E293B', borderRadius: 18 },
-  centerHeader: { alignItems: 'center' },
-  liveClock: { color: '#fff', fontSize: 26, fontWeight: '900' },
-  liveDate: { color: '#94A3B8', fontSize: 13, marginTop: 4 },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20 },
+  iconBtn: { width: 45, height: 45, borderRadius: 12, backgroundColor: '#1E293B', justifyContent: 'center', alignItems: 'center' },
+  headerTitleBox: { alignItems: 'center' },
+  mainTitle: { color: '#fff', fontSize: 20, fontWeight: '900' },
+  subTitle: { color: '#64748B', fontSize: 12, fontWeight: '600', marginTop: 2 },
 
-  daySelector: { marginTop: 25 },
-  dayChip: { width: 70, height: 90, backgroundColor: '#1E293B', borderRadius: 24, marginRight: 12, justifyContent: 'center', alignItems: 'center' },
-  activeDayChip: { backgroundColor: '#3B82F6' },
-  dayName: { color: '#64748B', fontWeight: 'bold', fontSize: 15 },
-  activeDayText: { color: '#fff' },
-  todayLabel: { color: '#3B82F6', fontSize: 10, fontWeight: '900', marginTop: 4, textTransform: 'uppercase' },
+  dayScroll: { marginTop: 20 },
+  dayTab: { paddingHorizontal: 20, paddingVertical: 10, marginRight: 10, borderRadius: 15 },
+  dayTabActive: { backgroundColor: '#3B82F6' },
+  dayTabText: { color: '#64748B', fontWeight: 'bold', fontSize: 14 },
+  dayTabTextActive: { color: '#fff' },
 
-  mainContent: { padding: 22, paddingTop: 30, paddingBottom: 100 },
-  classRow: { flexDirection: 'row', marginBottom: 25 },
-  timeColumn: { width: 65, alignItems: 'center', marginRight: 12 },
-  timeText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  periodText: { color: '#64748B', fontSize: 12 },
-  lineMarker: { width: 4, height: 40, borderRadius: 2, marginTop: 10 },
+  // List
+  listContent: { padding: 20, paddingBottom: 100 },
+  classWrapper: { flexDirection: 'row', marginBottom: 25 },
+  
+  // Time Column
+  timeSection: { width: 65, alignItems: 'center', justifyContent: 'space-between' },
+  timeLabelBox: { alignItems: 'center' },
+  timeMainText: { color: '#fff', fontSize: 18, fontWeight: '900' },
+  timeAmPm: { color: '#475569', fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' },
+  timeLine: { width: 3, flex: 1, marginVertical: 8, borderRadius: 3, opacity: 0.5 },
 
-  subjectCard: {
-    flex: 1, backgroundColor: '#0F172A', borderRadius: 30, padding: 20,
-    borderWidth: 1, borderColor: '#1E293B', elevation: 10, shadowColor: '#000', shadowOpacity: 0.4,
+  // Card
+  detailCard: {
+    flex: 1,
+    backgroundColor: '#0F172A',
+    borderRadius: 25,
+    flexDirection: 'row',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    elevation: 4,
   },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  subjectTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', flex: 1 },
-  typeBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  typeText: { fontSize: 10, fontWeight: 'bold' },
-  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 15 },
-  infoText: { color: '#CBD5E1', fontSize: 14 },
-  cardFooter: { flexDirection: 'row', gap: 15, borderTopWidth: 1, borderTopColor: '#1E293B', paddingTop: 15 },
-  footerItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  footerText: { color: '#64748B', fontSize: 12 },
+  cardAccent: { width: 6 },
+  cardMainBody: { flex: 1, padding: 16 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  subjectName: { color: '#fff', fontSize: 24, fontWeight: '900' },
+  tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  tagText: { fontSize: 10, fontWeight: '900', textTransform: 'uppercase' },
+  
+  facultyRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  facultyText: { color: '#94A3B8', fontSize: 14, fontWeight: '500' },
+  
+  infoDivider: { height: 1, backgroundColor: '#1E293B', marginVertical: 15 },
+  
+  locationGrid: { gap: 10 },
+  buildingInfo: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  buildingName: { color: '#CBD5E1', fontSize: 14, fontWeight: '700' },
+  
+  badgesContainer: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  metaBadge: { backgroundColor: '#1E293B', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  metaBadgeText: { color: '#94A3B8', fontSize: 12, fontWeight: 'bold' },
+  
+  roomCodeBadge: { backgroundColor: 'transparent', borderLeftWidth: 1, borderLeftColor: '#334155', borderRadius: 0, paddingLeft: 12, marginLeft: 5 },
+  roomCodeValue: { color: '#3B82F6', fontSize: 16, fontWeight: '900' },
 
-  noClassWrapper: { alignItems: 'center', marginTop: 50, paddingHorizontal: 30 },
-  moonGlow: { width: 160, height: 160, borderRadius: 80, backgroundColor: '#1E293B', justifyContent: 'center', alignItems: 'center', marginBottom: 30 },
-  star1: { position: 'absolute', top: 30, right: 30 },
-  noClassTitle: { color: '#fff', fontSize: 26, fontWeight: 'bold' },
-  noClassPara: { color: '#94A3B8', textAlign: 'center', fontSize: 15, marginTop: 15, lineHeight: 24 },
-  notesBtn: { marginTop: 40, backgroundColor: '#3B82F6', paddingHorizontal: 30, paddingVertical: 18, borderRadius: 20 },
-  notesBtnText: { color: '#fff', fontWeight: 'bold' }
+  noClassContainer: { alignItems: 'center', marginTop: 100, opacity: 0.5 },
+  noClassText: { color: '#fff', fontSize: 16, marginTop: 15, textAlign: 'center' }
 });
