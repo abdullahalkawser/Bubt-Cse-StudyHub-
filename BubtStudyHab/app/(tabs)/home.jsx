@@ -11,12 +11,113 @@ import { useRouter } from 'expo-router'
 
 
 
-// ডাটা সেট
-const routineData = [
-  { id: 1, time: '09:00 AM', subject: 'Calculus II', room: 'Room 302', icon: 'math-compass', color: '#22C55E' },
-  { id: 2, time: '11:00 AM', subject: 'Data Structure', room: 'Lab 01', icon: 'code-braces', color: '#3B82F6' },
-  { id: 3, time: '02:00 PM', subject: 'Physics II', room: 'Room 105', icon: 'atom', color: '#F59E0B' },
-];
+const data = {
+  Sunday: [
+    {
+      id: 1,
+      time: '01:15 PM',
+      subject: 'ENG 101',
+      teacher: 'JMSN',
+      room: '2705',
+      type: 'Theory',
+      color: '#6366F1',
+    },
+    {
+      id: 2,
+      time: '02:45 PM',
+      subject: 'BHC 101',
+      teacher: 'MARK',
+      room: '2706',
+      type: 'Theory',
+      color: '#EC4899',
+    },
+  ],
+
+  Monday: [
+    {
+      id: 3,
+      time: '08:15 AM',
+      subject: 'CSE 101',
+      teacher: 'MDSS',
+      room: '2316',
+      type: 'Theory',
+      color: '#3B82F6',
+    },
+    {
+      id: 4,
+      time: '09:45 AM',
+      subject: 'MAT 101',
+      teacher: 'MKI',
+      room: '2316',
+      type: 'Theory',
+      color: '#22C55E',
+    },
+  ],
+
+  Tuesday: [
+    {
+      id: 5,
+      time: '08:15 AM',
+      subject: 'ENG 101',
+      teacher: 'JMSN',
+      room: '2905',
+      type: 'Theory',
+      color: '#6366F1',
+    },
+    {
+      id: 6,
+      time: '09:45 AM',
+      subject: 'BHC 101',
+      teacher: 'MARK',
+      room: '2905',
+      type: 'Theory',
+      color: '#EC4899',
+    },
+  ],
+
+  Wednesday: [
+    {
+      id: 7,
+      time: '02:45 PM',
+      subject: 'CSE 102',
+      teacher: 'MDSS',
+      room: '2517',
+      type: 'Lab',
+      color: '#0EA5E9',
+    },
+    {
+      id: 8,
+      time: '04:15 PM',
+      subject: 'CSE 102',
+      teacher: 'MDSS',
+      room: '2517',
+      type: 'Lab',
+      color: '#0EA5E9',
+    },
+  ],
+
+  Thursday: [
+    {
+      id: 9,
+      time: '02:45 PM',
+      subject: 'CSE 101',
+      teacher: 'MDSS',
+      room: '2706',
+      type: 'Theory',
+      color: '#3B82F6',
+    },
+    {
+      id: 10,
+      time: '04:15 PM',
+      subject: 'MAT 101',
+      teacher: 'MKI',
+      room: '2706',
+      type: 'Theory',
+      color: '#22C55E',
+    },
+  ],
+};
+
 
 
 
@@ -37,7 +138,17 @@ export default function HomeScreen({navigation}) {
   });
   const router = useRouter()
 const [latestNotice, setLatestNotice] = useState(null);
+// // ১. আজকের বারের নাম বের করা (যেমন: "Monday")
+//   const todayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date());
 
+//   // ২. আপনার ডাটা থেকে আজকের লিস্টটি নেওয়া (যদি না থাকে তবে খালি অ্যারে [])
+//   const todaysClasses = data[todayName] || [];
+
+// অটোমেটিক আজকের দিনের বদলে ম্যানুয়ালি চেক করার জন্য:
+const todayName = 'Sunday'; 
+
+// অথবা সরাসরি ডাটা কল করার সময়:
+const todaysClasses = data['Sunday'] || [];
 
   useEffect(() => {
     fetchDashboardData();
@@ -149,26 +260,47 @@ const fetchDashboardData = async () => {
 
         {/* 📅 Today's Routine (Horizontal) */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Today's Routine</Text>
+          <Text style={styles.sectionTitle}>Today's({todayName}) Routine</Text>
          <TouchableOpacity onPress={() => router.push('/routine')}>
     <Text style={styles.seeAll}>View Routine</Text>
   </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingBottom: 10 }}>
-          {routineData.map((item) => (
+  
+      {todaysClasses.length > 0 ? (
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={{ paddingLeft: 20, paddingBottom: 10 }}
+        >
+          {todaysClasses.map((item) => (
             <View key={item.id} style={styles.routineCard}>
+              {/* আইকন বক্স: কালার অনুযায়ী হালকা ব্যাকগ্রাউন্ড */}
               <View style={[styles.routineIconBox, { backgroundColor: item.color + '20' }]}>
-                <MaterialCommunityIcons name={item.icon} size={24} color={item.color} />
+                <MaterialCommunityIcons 
+                  name={item.type === 'Lab' ? 'flask' : 'book-open-variant'} 
+                  size={24} 
+                  color={item.color} 
+                />
               </View>
+
               <Text style={styles.routineTime}>{item.time}</Text>
               <Text style={styles.routineSubject} numberOfLines={1}>{item.subject}</Text>
+              
+              {/* টিচার এর নাম (আপনার ডাটা অনুযায়ী) */}
+              <Text style={styles.teacherText}>{item.teacher}</Text>
+
               <View style={styles.roomBadge}>
                 <Ionicons name="location-sharp" size={10} color="#94A3B8" />
-                <Text style={styles.roomText}>{item.room}</Text>
+                <Text style={styles.roomText}>Room: {item.room}</Text>
               </View>
             </View>
           ))}
         </ScrollView>
+      ) : (
+        <View style={styles.noClassBox}>
+          <Text style={styles.noClassText}>No classes scheduled for today!</Text>
+        </View>
+      )}
           {/* ৩. Notice Board (Quick View) */}
         {/* <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent Notices</Text>
@@ -191,26 +323,54 @@ const fetchDashboardData = async () => {
 </View>
 
 {latestNotice ? (
-  <TouchableOpacity 
-    style={[styles.noticeCard, !latestNotice.read && { borderColor: '#22C55E' }]}
-    onPress={() => router.push('/notice')}
-  >
-    <View style={[styles.noticeIcon, { backgroundColor: latestNotice.read ? '#334155' : '#22C55E20' }]}>
-      <Ionicons 
-        name={latestNotice.read ? "mail-open-outline" : "megaphone-outline"} 
-        size={22} 
-        color={latestNotice.read ? "#94A3B8" : "#22C55E"} 
-      />
+  <View style={[styles.fullNoticeCard, !latestNotice.read && styles.unreadGlow]}>
+    
+    {/* কার্ডের উপরের অংশ: আইকন এবং স্ট্যাটাস */}
+    <View style={styles.cardHeader}>
+      <View style={[styles.iconCircle, { backgroundColor: latestNotice.read ? '#334155' : '#22C55E20' }]}>
+        <MaterialCommunityIcons 
+          name={latestNotice.read ? "bell-check-outline" : "bell-ring-outline"} 
+          size={22} 
+          color={latestNotice.read ? "#94A3B8" : "#22C55E"} 
+        />
+      </View>
+      
+      {!latestNotice.read ? (
+        <View style={styles.unreadTag}>
+          <View style={styles.dot} />
+          <Text style={styles.unreadTagText}>UNREAD NOTICE</Text>
+        </View>
+      ) : (
+        <Text style={styles.readTime}>{latestNotice.createdAt ? "Recent Update" : ""}</Text>
+      )}
     </View>
-    <View style={{ flex: 1, marginLeft: 15 }}>
-      <Text style={styles.noticeText} numberOfLines={1}>{latestNotice.title}</Text>
-      <Text style={styles.noticeTime} numberOfLines={1}>{latestNotice.desc}</Text>
+
+    {/* নোটিশ কন্টেন্ট সেকশন */}
+    <View style={styles.contentBody}>
+      <Text style={styles.fullTitle}>{latestNotice.title}</Text>
+      
+      {/* একটি সূক্ষ্ম ডিভাইডার লাইন */}
+      <View style={styles.miniDivider} />
+      
+      <Text style={styles.fullDesc}>
+        {latestNotice.desc}
+      </Text>
     </View>
-    {!latestNotice.read && <View style={styles.newDot} />}
-  </TouchableOpacity>
+
+    {/* কার্ডের নিচের অংশ: তারিখ বা সময় */}
+    <View style={styles.cardFooter}>
+      <MaterialCommunityIcons name="clock-outline" size={14} color="#64748B" />
+      <Text style={styles.footerDate}>
+        Posted on: {latestNotice.createdAt?.toDate 
+          ? latestNotice.createdAt.toDate().toLocaleDateString('en-GB') 
+          : 'Recent'}
+      </Text>
+    </View>
+
+  </View>
 ) : (
-  <View style={styles.noticeCard}>
-    <Text style={{ color: '#94A3B8' }}>No notices available</Text>
+  <View style={styles.emptyNotice}>
+    <Text style={styles.emptyText}>No Active Notices</Text>
   </View>
 )}
 
@@ -308,7 +468,7 @@ const TouchableOpacity = ({ children, style, onPress }) => (
 const styles = StyleSheet.create({
   mainContainer: { flex: 1, backgroundColor: '#0F172A' },
   headerGradient: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#0e9e2dff',
     paddingBottom: 40,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 35,
@@ -338,7 +498,7 @@ const styles = StyleSheet.create({
   routineCard: { backgroundColor: '#1E293B', width: 140, padding: 15, borderRadius: 22, marginRight: 15, borderWidth: 1, borderColor: '#334155' },
   routineIconBox: { width: 45, height: 45, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
   routineTime: { color: '#22C55E', fontSize: 12, fontWeight: 'bold' },
-  routineSubject: { color: '#fff', fontSize: 14, fontWeight: 'bold', marginTop: 5 },
+ 
   roomBadge: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   roomText: { color: '#94A3B8', fontSize: 10, marginLeft: 4 },
 
@@ -394,14 +554,207 @@ notiBadge: {
     backgroundColor: '#22C55E',
     marginLeft: 10
   },
-  noticeCard: { 
-    backgroundColor: '#1E293B', 
-    marginHorizontal: 20, 
-    padding: 15, 
-    borderRadius: 20, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    borderWidth: 1, 
-    borderColor: '#334155' 
+fullNoticeCard: {
+    backgroundColor: '#1E293B',
+    borderRadius: 24,
+    padding: 20,
+    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: '#334155',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
   },
+  unreadGlow: {
+    borderColor: '#22C55E50',
+    backgroundColor: '#1E293B', 
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unreadTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#22C55E15',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  unreadTagText: {
+    color: '#22C55E',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#22C55E',
+  },
+  readTime: {
+    color: '#64748B',
+    fontSize: 12,
+  },
+  contentBody: {
+    marginBottom: 15,
+  },
+  fullTitle: {
+    color: '#FFFFFF',
+    fontSize: 19,
+    fontWeight: '800',
+    lineHeight: 24,
+    marginBottom: 8,
+  },
+  miniDivider: {
+    height: 2,
+    width: 30,
+    backgroundColor: '#22C55E',
+    borderRadius: 5,
+    marginBottom: 12,
+  },
+  fullDesc: {
+    color: '#CBD5E1',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '400',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#334155',
+    paddingTop: 12,
+    marginTop: 5,
+  },
+  footerDate: {
+    color: '#64748B',
+    fontSize: 12,
+    marginLeft: 6,
+  },
+  emptyNotice: {
+    padding: 30,
+    alignItems: 'center',
+    backgroundColor: '#1E293B',
+    borderRadius: 20,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  emptyText: {
+    color: '#64748B',
+    fontSize: 14,
+  },
+  unreadCardShadow: {
+    borderColor: '#22C55E40',
+    shadowColor: "#22C55E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  unreadIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
+    backgroundColor: '#22C55E',
+  },
+  cardTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  newBadge: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+  newBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  timeAgo: {
+    color: '#64748B',
+    fontSize: 11,
+  },
+  textContainer: {
+    marginBottom: 12,
+  },
+  noticeTitle: {
+    color: '#CBD5E1',
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  noticeDescription: {
+    color: '#94A3B8',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#334155',
+    paddingTop: 10,
+    marginTop: 5,
+  },
+  clickPrompt: {
+    color: '#64748B',
+    fontSize: 11,
+    fontStyle: 'italic',
+  },
+  emptyCard: {
+    backgroundColor: '#1E293B',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  emptyText: {
+    color: '#64748B',
+    marginTop: 10,
+    fontSize: 14,
+  },
+  routineIconBox: { width: 45, height: 45, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
+  routineTime: { fontSize: 12, color: '#64748B', fontWeight: '600' },
+  routineSubject: { fontSize: 16, fontWeight: 'bold', color: '#f5f9ffff', marginVertical: 4 },
+  teacherText: { fontSize: 11, color: '#94A3B8', marginBottom: 8 },
+  roomBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 5, alignSelf: 'flex-start' },
+  roomText: { fontSize: 10, color: '#64748B', marginLeft: 3 },
+  noClassBox: { marginLeft: 20, padding: 20, backgroundColor: '#F8FAFC', borderRadius: 10, marginRight: 20 },
+  noClassText: { color: '#94A3B8', fontStyle: 'italic' }
 });
