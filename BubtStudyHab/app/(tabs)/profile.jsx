@@ -70,7 +70,7 @@ export default function StudyProfile() {
         <MenuLink icon="notifications-outline" title="Class Reminders" color="#22C55E" />
         <MenuLink icon="download-outline" title="Downloads" subtitle="Offline materials" color="#64748B" />
         <TouchableOpacity style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Logout</Text>
+          <Text style={styles.logoutText}>plz logout your profile </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

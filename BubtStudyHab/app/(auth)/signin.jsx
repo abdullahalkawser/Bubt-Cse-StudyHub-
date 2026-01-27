@@ -67,7 +67,7 @@ const handleLogin = async () => {
               <FontAwesome5 name="university" size={30} color="#22C55E" />
             </View>
             <Text style={styles.title}>BUBT CSE Hub</Text>
-            <Text style={styles.subtitle}>Welcome back! Access your academic resources with ease.</Text>
+            <Text style={styles.subtitle}>Welcome back! Access your academic resources with ease  for your acadmic journey.</Text>
           </Animated.View>
 
           {/* Form */}
