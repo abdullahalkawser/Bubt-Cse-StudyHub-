@@ -28,3 +28,9 @@ export const db = getFirestore(app);
 
 // Storage instance
 export const storage = getStorage(app);
+
+const this_item  = storage.app()
+
+
+
+//when you get study for many hours you got  good reulst ans to do bye anythis
